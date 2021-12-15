@@ -1,0 +1,33 @@
+service: sls-user-profile
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  lambdaHashingVersion: "20201221"
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+
+package:
+  excludeDevDependencies: true
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+
+functions:
+  createUser:
+    handler: src/handlers/createUser.handler
+    events:
+      - http:
+          path: /user-profile
+          method: post
+          cors: true
