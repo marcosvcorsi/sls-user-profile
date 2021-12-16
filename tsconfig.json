@@ -17,6 +17,7 @@
     ".webpack/**/*",
     "_warmup/**/*",
     ".vscode/**/*",
-    "terraform/**/*"
+    "terraform/**/*",
+    ".husky/**/*"
   ]
 }
