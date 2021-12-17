@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import multipart from 'aws-lambda-multipart-parser';
 import AWS from 'aws-sdk';
+import parser from 'lambda-multipart-parser';
 
 import { logger } from '../utils/logger';
 
@@ -8,23 +8,13 @@ AWS.config.update({ region: 'us-east-1' });
 
 export const handler: APIGatewayProxyHandler = async event => {
   try {
-    if (event.isBase64Encoded) {
-      // eslint-disable-next-line no-param-reassign
-      event.body = Buffer.from(event.body, 'base64').toString('utf-8');
-    }
+    const { files } = await parser.parse(event);
 
-    logger.info(typeof event.body);
-
-    const { file } = multipart.parse(event, false);
+    const [file] = files;
 
     const { filename, content, contentType } = file;
 
     logger.info({ filename, contentType });
-    logger.info({
-      type: content.type,
-      data: content.data,
-      typeBuffer: typeof content,
-    });
 
     const s3 = new AWS.S3();
 
@@ -46,9 +36,7 @@ export const handler: APIGatewayProxyHandler = async event => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        picture,
-      }),
+      body: JSON.stringify({ picture }),
     };
   } catch (error) {
     logger.error({ error });
