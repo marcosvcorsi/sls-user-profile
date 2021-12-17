@@ -4,4 +4,7 @@ node_modules
 
 .esbuild
 
+.terraform
+.terraform.*
+
 coverage

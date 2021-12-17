@@ -1,15 +1,24 @@
 service: sls-user-profile
-frameworkVersion: "2"
+frameworkVersion: '2'
 
 provider:
   name: aws
   runtime: nodejs14.x
   region: us-east-1
   stage: ${opt:stage, 'dev'}
-  lambdaHashingVersion: "20201221"
+  lambdaHashingVersion: '20201221'
   apiGateway:
-    minimumCompressionSize: 1024
-    shouldStartNameWithService: true
+    binaryMediaTypes:
+      - 'multipart/form-data'
+  environment:
+    BUCKET_NAME: ${self:custom.bucketName}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource:
+        - arn:aws:s3:::${self:custom.bucketName}/*
+        - arn:aws:s3:::${self:custom.bucketName}
 
 plugins:
   - serverless-esbuild
@@ -22,6 +31,7 @@ custom:
   esbuild:
     bundle: true
     minify: false
+  bucketName: ${opt:stage, 'dev'}-mvc-user-profile
 
 functions:
   createUser:
@@ -29,5 +39,5 @@ functions:
     events:
       - http:
           path: /user-profile
-          method: post
+          method: POST
           cors: true
