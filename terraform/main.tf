@@ -54,3 +54,35 @@ resource "aws_sqs_queue" "user_profile_created_queue" {
     deadLetterTargetArn = aws_sqs_queue.user_profile_created_queue_dlq.arn
   })
 }
+
+resource "aws_sqs_queue_policy" "user_profile_created_queue_policy" {
+  queue_url = aws_sqs_queue.user_profile_created_queue.id
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Id": "sqspolicy",
+  "Statement": [
+    {
+      "Sid": "First",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "sqs:SendMessage",
+      "Resource": "${aws_sqs_queue.user_profile_created_queue.arn}",
+      "Condition": {
+        "ArnEquals": {
+          "aws:SourceArn": "${aws_sns_topic.user_profile_created_topic.arn}"
+        }
+      }
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_sns_topic_subscription" "user_profile_created_subscription" {
+  protocol             = "sqs"
+  raw_message_delivery = true
+  topic_arn            = aws_sns_topic.user_profile_created_topic.arn
+  endpoint             = aws_sqs_queue.user_profile_created_queue.arn
+}

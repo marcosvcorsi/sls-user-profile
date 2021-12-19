@@ -26,6 +26,11 @@ provider:
         - dynamodb:*
       Resource:
         - arn:aws:dynamodb:${self:provider.region}:*:table/${self:custom.tableName}
+    - Effect: Allow
+      Action:
+        - SNS:Publish
+      Resource:
+        - ${self:custom.snsUserProfileCreatedArn}
 
 plugins:
   - serverless-esbuild
@@ -41,6 +46,7 @@ custom:
   bucketName: ${opt:stage, 'dev'}-mvc-user-profile
   tableName: ${opt:stage, 'dev'}-users-profile
   snsUserProfileCreatedArn: arn:aws:sns:${aws:region}:${aws:accountId}:${opt:stage, 'dev'}-user-profile-created
+  sqsUserProfileCreatedArn: arn:aws:sqs:${aws:region}:${aws:accountId}:${opt:stage, 'dev'}-user-profile-created-queue
 functions:
   create-user:
     handler: src/main/handlers/create-user.handler
@@ -49,3 +55,9 @@ functions:
           path: /user-profile
           method: POST
           cors: true
+  user-profile:
+    handler: src/main/handlers/user-profile.handler
+    events:
+      - sqs:
+          arn: ${self:custom.sqsUserProfileCreatedArn}
+          batchSize: 1
