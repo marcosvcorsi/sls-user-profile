@@ -1,6 +1,6 @@
 export type HttpResponse = {
   statusCode: number;
-  body: string;
+  body: any;
 };
 
 export const OK = 200;
@@ -11,15 +11,15 @@ export const SERVER_ERROR = 500;
 
 export const badRequest = (message: string): HttpResponse => ({
   statusCode: BAD_REQUEST,
-  body: JSON.stringify({ message }),
+  body: { message },
 });
 
 export const ok = (content: any): HttpResponse => ({
   statusCode: OK,
-  body: JSON.stringify(content),
+  body: content,
 });
 
 export const serverError = (): HttpResponse => ({
   statusCode: SERVER_ERROR,
-  body: JSON.stringify({ message: 'Internal Server Error' }),
+  body: { message: 'Internal Server Error' },
 });

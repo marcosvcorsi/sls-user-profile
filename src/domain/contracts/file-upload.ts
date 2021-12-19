@@ -1,4 +1,4 @@
-type Params = {
+export type Params = {
   id: string;
   file: {
     filename: string;

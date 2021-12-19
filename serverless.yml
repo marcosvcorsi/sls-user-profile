@@ -42,8 +42,8 @@ custom:
   tableName: ${opt:stage, 'dev'}-users-profile
   snsUserProfileCreatedArn: arn:aws:sns:${aws:region}:${aws:accountId}:${opt:stage, 'dev'}-user-profile-created
 functions:
-  createUser:
-    handler: src/handlers/createUser.handler
+  create-user:
+    handler: src/main/handlers/create-user.handler
     events:
       - http:
           path: /user-profile
