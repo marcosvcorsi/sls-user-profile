@@ -13,6 +13,7 @@ provider:
   environment:
     BUCKET_NAME: ${self:custom.bucketName}
     TABLE_NAME: ${self:custom.tableName}
+    SNS_USER_CREATED_TOPIC: ${self:custom.snsUserProfileCreatedArn}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -39,7 +40,7 @@ custom:
     minify: false
   bucketName: ${opt:stage, 'dev'}-mvc-user-profile
   tableName: ${opt:stage, 'dev'}-users-profile
-
+  snsUserProfileCreatedArn: arn:aws:sns:${aws:region}:${aws:accountId}:${opt:stage, 'dev'}-user-profile-created
 functions:
   createUser:
     handler: src/handlers/createUser.handler

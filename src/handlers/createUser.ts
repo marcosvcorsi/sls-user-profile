@@ -1,6 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import AWS from 'aws-sdk';
 import parser from 'lambda-multipart-parser';
+import { v4 } from 'uuid';
 
 import { UserProfile } from '../model/user-profile';
 import { logger } from '../utils/logger';
@@ -42,6 +43,21 @@ const saveUserProfile = async (data: UserProfile) => {
     .promise();
 };
 
+const emitUserProfileCreatedEvent = async (
+  user: UserProfile,
+): Promise<void> => {
+  const sns = new AWS.SNS();
+
+  logger.info({ topic: process.env.SNS_USER_CREATED_TOPIC });
+
+  await sns
+    .publish({
+      TopicArn: process.env.SNS_USER_CREATED_TOPIC,
+      Message: JSON.stringify(user),
+    })
+    .promise();
+};
+
 export const handler: APIGatewayProxyHandler = async event => {
   try {
     const { files, ...fields } = await parser.parse(event);
@@ -62,12 +78,15 @@ export const handler: APIGatewayProxyHandler = async event => {
     const { email, name } = fields;
 
     const user: UserProfile = {
+      id: v4(),
       email,
       name,
       picture,
     };
 
     await saveUserProfile(user);
+
+    await emitUserProfileCreatedEvent(user);
 
     return {
       statusCode: 200,
