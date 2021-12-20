@@ -1,4 +1,4 @@
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 import uuid from 'uuid-by-string';
 
 import { UuidHandler } from '../../../src/infra/uuid/uuid-handler';
@@ -22,6 +22,16 @@ describe('UuidHandler', () => {
     sut.generate(value);
 
     expect(uuid).toHaveBeenCalledWith(value);
+  });
+
+  it('should throw if uuid by string throws', () => {
+    const error = new Error('any_eror');
+
+    mocked(uuid).mockImplementationOnce(() => {
+      throw error;
+    });
+
+    expect(() => sut.generate(value)).toThrow(error);
   });
 
   it('should return uuid generated on success', () => {
