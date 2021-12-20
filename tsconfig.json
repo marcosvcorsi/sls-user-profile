@@ -10,14 +10,5 @@
     "outDir": "lib",
     "esModuleInterop": true
   },
-  "include": ["src/**/*.ts"],
-  "exclude": [
-    "node_modules/**/*",
-    ".serverless/**/*",
-    ".webpack/**/*",
-    "_warmup/**/*",
-    ".vscode/**/*",
-    "terraform/**/*",
-    ".husky/**/*"
-  ]
+  "include": ["src", "test"]
 }

@@ -43,6 +43,7 @@ custom:
   esbuild:
     bundle: true
     minify: false
+    tsconfig: tsconfig-build.json
   bucketName: ${opt:stage, 'dev'}-mvc-user-profile
   tableName: ${opt:stage, 'dev'}-users-profile
   snsUserProfileCreatedArn: arn:aws:sns:${aws:region}:${aws:accountId}:${opt:stage, 'dev'}-user-profile-created
