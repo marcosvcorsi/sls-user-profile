@@ -44,12 +44,12 @@ export class CreateUserProfile {
       file,
     });
 
-    const user: UserProfile = {
+    const user = new UserProfile({
       id,
       email,
       name,
       picture,
-    };
+    });
 
     await this.userProfileRepository.save(user);
 
