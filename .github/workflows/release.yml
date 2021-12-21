@@ -82,3 +82,9 @@ jobs:
             -var="environment=${{ env.STAGE }}" \
             -var="region=${{ secrets.AWS_REGION }}" \
             -auto-approve
+
+      - name: Serverless deploy
+        run: |
+          npx sls deploy \
+            --stage ${{ env.STAGE }} \
+            --region ${{ secrets.AWS_REGION }}
