@@ -19,8 +19,9 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "user_profile_bucket" {
-  bucket = "${var.environment}-${var.bucket_name}"
-  acl    = "public-read"
+  bucket        = "${var.environment}-${var.bucket_name}"
+  acl           = "public-read"
+  force_destroy = var.environment != "prod" ? true : false
 }
 
 resource "aws_dynamodb_table" "users_profile_table" {
