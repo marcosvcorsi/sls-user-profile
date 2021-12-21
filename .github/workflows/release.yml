@@ -74,3 +74,11 @@ jobs:
             -backend-config="bucket=mvc-terraform-state" \
             -backend-config="key=${{ env.STAGE }}-sls-user-profile/terraform.tfstate" \
             -backend-config="region=${{ secrets.AWS_REGION }}"
+
+      - name: Terraform apply
+        run: |
+          cd terraform &&
+          terraform apply \
+            -var="environment=${{ env.STAGE }}" \
+            -var="region=${{ secrets.AWS_REGION }}" \
+            -auto-approve
