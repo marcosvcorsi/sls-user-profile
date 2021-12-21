@@ -1,9 +1,5 @@
 terraform {
-  backend "s3" {
-    bucket = "mvc-terraform-state"
-    key    = "sls-user-profile/terraform.tfstate"
-    region = "us-east-1"
-  }
+  backend "s3" {}
 
   required_providers {
     aws = {

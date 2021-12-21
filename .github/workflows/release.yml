@@ -42,3 +42,22 @@ jobs:
       # Run tests
       - name: Run Tests
         run: npm run test:coverage
+
+      # Configure AWS Credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: HashiCorp - Setup Terraform
+        uses: hashicorp/setup-terraform@v1.2.1
+
+      - name: Terraform init
+        run: |
+          cd terraform &&
+          terraform init \
+            -backend-config="bucket=mvc-terraform-state" \
+            -backend-config="key=sls-user-profile/terraform.tfstate" \
+            -backend-config="region=${{ secrets.AWS_REGION }}"
