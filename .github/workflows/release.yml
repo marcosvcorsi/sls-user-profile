@@ -56,10 +56,21 @@ jobs:
       - name: HashiCorp - Setup Terraform
         uses: hashicorp/setup-terraform@v1.2.1
 
+      - name: Set env BRANCH
+        run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
+
+      - name: Set env STAGE
+        run: |
+          if [[ $BRANCH == 'main' ]]; then
+              echo "STAGE=prod" >> "$GITHUB_ENV"
+          else
+              echo "STAGE=dev" >> "$GITHUB_ENV"
+          fi
+
       - name: Terraform init
         run: |
           cd terraform &&
           terraform init \
             -backend-config="bucket=mvc-terraform-state" \
-            -backend-config="key=sls-user-profile/terraform.tfstate" \
+            -backend-config="key=${{ env.STAGE }}-sls-user-profile/terraform.tfstate" \
             -backend-config="region=${{ secrets.AWS_REGION }}"
